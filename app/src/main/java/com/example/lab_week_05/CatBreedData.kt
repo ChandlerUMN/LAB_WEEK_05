@@ -1,6 +1,9 @@
-package com.example.lab_week_05
+package com.example.lab_week_05.model
+
+import com.squareup.moshi.Json
 
 data class CatBreedData(
-    val name: String,
-    val temperament: String
+    @field:Json(name = "id") val id: String,
+    @field:Json(name = "name") val name: String
 )
+
