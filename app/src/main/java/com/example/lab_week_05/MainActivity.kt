@@ -56,19 +56,31 @@ class MainActivity : AppCompatActivity() {
 
             override fun onResponse(call: Call<List<ImageData>>, response: Response<List<ImageData>>) {
                 if (response.isSuccessful) {
-                    val firstImage = response.body()?.firstOrNull()?.imageUrl.orEmpty()
-                    if (firstImage.isNotBlank()) {
-                        imageLoader.loadImage(firstImage, imageResultView)
+                    val firstImageData = response.body()?.firstOrNull()
+
+                    val imageUrl = firstImageData?.imageUrl.orEmpty()
+                    val breedName = if (!firstImageData?.breeds.isNullOrEmpty()) {
+                        firstImageData?.breeds?.first()?.name ?: "Unknown"
+                    } else {
+                        "Unknown"
+                    }
+
+                    // Load image into ImageView
+                    if (imageUrl.isNotBlank()) {
+                        imageLoader.loadImage(imageUrl, imageResultView)
                     } else {
                         Log.d(MAIN_ACTIVITY, "Missing image URL")
                     }
-                    apiResponseView.text = getString(R.string.image_placeholder, firstImage)
+
+                    // Show breed name in TextView
+                    apiResponseView.text = breedName
                 } else {
                     Log.e(MAIN_ACTIVITY, "Failed to get response\n${response.errorBody()?.string().orEmpty()}")
                 }
             }
         })
     }
+
 
     companion object {
         const val MAIN_ACTIVITY = "MAIN_ACTIVITY"
